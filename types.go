@@ -47,12 +47,7 @@ type VkPipelineStageFlags uint32
 type VulkanDeviceMemory uintptr
 type VkMemoryMapFlags uint32
 type VkMemoryPropertyFlags uint32
-
-type Vec3 struct {
-    X float32
-    Y float32
-    Z float32
-}
+type VkCommandBufferUsageFlags uint32
 
 type VkMemoryRequirements struct {
     Size           uint64
@@ -102,6 +97,7 @@ type VkSubmitInfo struct {
     SignalSemaphoreCount uint32
     PSignalSemaphores    *VulkanSemaphore
 }
+
 type VkWriteDescriptorSet struct {
     SType           VkStructureType
     PNext           unsafe.Pointer
@@ -123,10 +119,11 @@ type VkComputePipelineCreateInfo struct {
     BasePipelineHandle VulkanPipeline
     BasePipelineIndex  int32
 }
-
 type VkCommandBufferBeginInfo struct {
     SType            VkStructureType
+    Flags            VkCommandBufferUsageFlags // Pre staršie verzie
     PInheritanceInfo *VkCommandBufferInheritanceInfo
+    Usage            VkCommandBufferUsageFlags // Pre Vulkan 1.2 a novšie
 }
 type VkDescriptorSetAllocateInfo struct {
     SType              VkStructureType
@@ -213,7 +210,63 @@ type VkInstanceCreateInfo struct {
 	EnabledExtensionCount uint32
 	PpEnabledExtensionNames **byte
 }
-
+type VkPhysicalDeviceFeatures struct {
+	RobustBufferAccess                      VkBool32
+	FullDrawIndexUint32                     VkBool32
+	ImageCubeArray                          VkBool32
+	IndependentBlend                        VkBool32
+	GeometryShader                          VkBool32
+	TessellationShader                      VkBool32
+	SampleRateShading                       VkBool32
+	DualSrcBlend                            VkBool32
+	LogicOp                                 VkBool32
+	MultiDrawIndirect                       VkBool32
+    DrawIndirectFirstInstance               VkBool32
+    DepthClamp VkBool32
+    DepthBiasClamp VkBool32
+	FillModeNonSolid                        VkBool32
+	DepthBounds                             VkBool32
+	WideLines                               VkBool32
+	LargePoints                             VkBool32
+	AlphaToOne                              VkBool32
+	MultiViewport                           VkBool32
+	SamplerAnisotropy                       VkBool32
+	TextureCompressionETC2                  VkBool32
+	TextureCompressionASTC_LDR              VkBool32
+	TextureCompressionBC                    VkBool32
+	OcclusionQueryPrecise                   VkBool32
+	PipelineStatisticsQuery                 VkBool32
+	VertexPipelineStoresAndAtomics        VkBool32
+	FragmentStoresAndAtomics              VkBool32
+	ShaderTessellationAndGeometryPointSize VkBool32
+	ShaderImageGatherExtended             VkBool32
+	ShaderStorageImageExtendedFormats     VkBool32
+	ShaderStorageImageMultisample         VkBool32
+	ShaderStorageImageReadWithoutFormat   VkBool32
+	ShaderStorageImageWriteWithoutFormat  VkBool32
+	ShaderUniformBufferArrayDynamicIndexing  VkBool32
+	ShaderSampledImageArrayDynamicIndexing VkBool32
+	ShaderStorageBufferArrayDynamicIndexing VkBool32
+	ShaderStorageImageArrayDynamicIndexing VkBool32
+	ShaderClipDistance                      VkBool32
+	ShaderCullDistance                      VkBool32
+	ShaderFloat64                           VkBool32
+	ShaderInt64                             VkBool32
+	ShaderInt16                             VkBool32
+	ShaderResourceResidency                 VkBool32
+	ShaderResourceMinLod                    VkBool32
+	SparseBinding                           VkBool32
+	SparseResidencyBuffer                   VkBool32
+	SparseResidencyImage2D                  VkBool32
+	SparseResidencyImage3D                  VkBool32
+	SparseResidency2Samples                 VkBool32
+	SparseResidency4Samples                 VkBool32
+	SparseResidency8Samples                 VkBool32
+	SparseResidency16Samples                VkBool32
+	SparseResidencyAliased                  VkBool32
+	VariableMultisampleRate                 VkBool32
+	InheritedQueries                        VkBool32
+}
 // Vulkan Device Create Info
 type VkDeviceCreateInfo struct {
 	SType                   VkStructureType
@@ -225,7 +278,7 @@ type VkDeviceCreateInfo struct {
 	PpEnabledLayerNames     **byte
 	EnabledExtensionCount   uint32
 	PpEnabledExtensionNames **byte
-	PEnabledFeatures        unsafe.Pointer
+	PEnabledFeatures        *VkPhysicalDeviceFeatures
 }
 
 // Vulkan Buffer Create Info

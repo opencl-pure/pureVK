@@ -130,7 +130,9 @@ func registerVulkanFuncs() error {
 	err = registerFuncWithoutPanic(&vkEnumeratePhysicalDevices, vulkanLib, "vkEnumeratePhysicalDevices", err)
 
 	err = registerFuncWithoutPanic(&vkGetPhysicalDeviceMemoryProperties, vulkanLib, "vkGetPhysicalDeviceMemoryProperties", err)
-    
+
+
+	err = registerFuncWithoutPanic(&vkCreateDescriptorPool, vulkanLib, "vkCreateDescriptorPool", err)
 	return err
 }
 

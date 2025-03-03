@@ -112,5 +112,7 @@ const (
 )
 
 const (
+         VK_WHOLE_SIZE uint64 = ^uint64(0)
     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT VkMemoryPropertyFlags = 4
 )
+const VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT VkCommandBufferUsageFlags = 1
