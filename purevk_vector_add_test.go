@@ -451,44 +451,49 @@ func createDescriptorSets(device VulkanDevice, descriptorPool VulkanDescriptorPo
 
     return []VulkanDescriptorSet{descriptorSet}, nil
 }
-func createCommandBuffer(device VulkanDevice, commandPool VulkanCommandPool) (VulkanCommandBuffer, error) {
-    allocateInfo := VkCommandBufferAllocateInfo{
-            SType:              VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            CommandPool:        commandPool,
-            Level:              VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            CommandBufferCount: 1,
-    }
-
-    var commandBuffer VulkanCommandBuffer
-    result, err := VkAllocateCommandBuffers(device, &allocateInfo, &commandBuffer)
-    if err != nil || result != VK_SUCCESS {
-            return VulkanCommandBuffer(0), fmt.Errorf("VkAllocateCommandBuffers failed: %v, %s", err, HandleVkResult(result))
-    }
-    return commandBuffer, nil
-}
 
 func recordCommandBuffer(commandBuffer VulkanCommandBuffer, pipeline VulkanPipeline, pipelineLayout VulkanPipelineLayout, descriptorSets []VulkanDescriptorSet, groupCountX uint32) error {
     beginInfo := VkCommandBufferBeginInfo{
-            SType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            Flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+        SType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        Flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
     }
 
     result, err := VkBeginCommandBuffer(commandBuffer, &beginInfo)
     if err != nil || result != VK_SUCCESS {
-            return fmt.Errorf("VkBeginCommandBuffer failed: %v, %s", err, HandleVkResult(result))
+        return fmt.Errorf("VkBeginCommandBuffer failed: %s", HandleVkResult(result))
     }
 
-    VkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline)
-    VkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &descriptorSets[0], 0, nil)
-    VkCmdDispatch(commandBuffer, groupCountX, 1, 1)
+    // Overenie VkResult pre VkCmdBindPipeline
+    result, err = VkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline)
+    if err != nil || result < VK_SUCCESS {
+        return fmt.Errorf("VkBeginCommandBuffer failed: %s", HandleVkResult(result))
+    }
+
+    // Overenie VkResult pre VkCmdBindDescriptorSets
+    result, err = VkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &descriptorSets[0], 0, nil)
+    if err != nil || result != VK_SUCCESS {
+        return fmt.Errorf("VkBeginCommandBuffer failed: %s", HandleVkResult(result))
+    }
+
+    fmt.Printf("groupCountX: %d\n", groupCountX)
+
+    // Overenie VkResult pre VkCmdDispatch a spracovanie chyby
+    result, err = VkCmdDispatch(commandBuffer, groupCountX, 1, 1)
+    if err != nil || result != VK_SUCCESS {
+        if err != nil {
+            return fmt.Errorf("VkCmdDispatch failed: %s, %v", HandleVkResult(result), err)
+        }
+        return fmt.Errorf("VkCmdDispatch failed: %s", HandleVkResult(result))
+    }
 
     result, err = VkEndCommandBuffer(commandBuffer)
     if err != nil || result != VK_SUCCESS {
-            return fmt.Errorf("VkEndCommandBuffer failed: %v, %s", err, HandleVkResult(result))
+        return fmt.Errorf("VkEndCommandBuffer failed: %s", HandleVkResult(result))
     }
 
     return nil
 }
+
 func submitCommandBuffer(device VulkanDevice, queue VulkanQueue, commandBuffer VulkanCommandBuffer) error {
     submitInfo := VkSubmitInfo{
             SType:                VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -518,4 +523,21 @@ func mapMemory(device VulkanDevice, memory VulkanDeviceMemory, data unsafe.Point
 
     VkUnmapMemory(device, memory)
     return nil
+}
+
+func createCommandBuffer(device VulkanDevice, commandPool VulkanCommandPool) (VulkanCommandBuffer, error) {
+    allocateInfo := VkCommandBufferAllocateInfo{
+        SType:              VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        CommandPool:        commandPool,
+        Level:              VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        CommandBufferCount: 1,
+    }
+
+    var commandBuffer VulkanCommandBuffer
+    result, err := VkAllocateCommandBuffers(device, &allocateInfo, &commandBuffer)
+    if err != nil || result != VK_SUCCESS {
+        return VulkanCommandBuffer(0), fmt.Errorf("VkAllocateCommandBuffers failed: %s", HandleVkResult(result))
+    }
+
+    return commandBuffer, nil
 }

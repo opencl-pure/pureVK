@@ -14,65 +14,64 @@ var (
 
 // Vulkan funkcie
 var (
-	vkCreateInstance     func(*VkInstanceCreateInfo, *VkAllocationCallbacks, *VulkanInstance) VkResult
-	vkDestroyInstance    func(VulkanInstance, *VkAllocationCallbacks)
+    vkCreateInstance                  func(*VkInstanceCreateInfo, *VkAllocationCallbacks, *VulkanInstance) VkResult
+    vkDestroyInstance                 func(VulkanInstance, *VkAllocationCallbacks)
+    vkEnumeratePhysicalDevices        func(VulkanInstance, *uint32, *VulkanPhysicalDevice) VkResult
+
+    vkCreateDevice                    func(VulkanPhysicalDevice, *VkDeviceCreateInfo, *VkAllocationCallbacks, *VulkanDevice) VkResult
+    vkDestroyDevice                   func(VulkanDevice, *VkAllocationCallbacks)
+    vkCreateBuffer                    func(VulkanDevice, *VkBufferCreateInfo, *VkAllocationCallbacks, *VulkanBuffer) VkResult
+    vkDestroyBuffer                   func(VulkanDevice, VulkanBuffer, *VkAllocationCallbacks)
+    vkCreateImage                     func(VulkanDevice, *VkImageCreateInfo, *VkAllocationCallbacks, *VulkanImage) VkResult
+    vkDestroyImage                    func(VulkanDevice, VulkanImage, *VkAllocationCallbacks)
+    vkCreateShaderModule              func(VulkanDevice, *VkShaderModuleCreateInfo, *VkAllocationCallbacks, *VulkanShaderModule) VkResult
+
+    vkCreateCommandPool               func(VulkanDevice, *VkCommandPoolCreateInfo, *VkAllocationCallbacks, *VulkanCommandPool) VkResult
+    vkAllocateCommandBuffers          func(VulkanDevice, *VkCommandBufferAllocateInfo, *VulkanCommandBuffer) VkResult
+    vkBeginCommandBuffer              func(VulkanCommandBuffer, *VkCommandBufferBeginInfo) VkResult
+    vkEndCommandBuffer                func(VulkanCommandBuffer) VkResult
+    vkQueueSubmit                     func(VulkanQueue, uint32, *VkSubmitInfo, VulkanFence) VkResult
+    vkQueueWaitIdle                   func(VulkanQueue) VkResult
+
+    vkCreateDescriptorSetLayout       func(VulkanDevice, *VkDescriptorSetLayoutCreateInfo, *VkAllocationCallbacks, *VulkanDescriptorSetLayout) VkResult
+    vkAllocateDescriptorSets          func(VulkanDevice, *VkDescriptorSetAllocateInfo, *VulkanDescriptorSet) VkResult
+    vkUpdateDescriptorSets            func(VulkanDevice, uint32, *VkWriteDescriptorSet, uint32, *VkCopyDescriptorSet)
+
+    vkCreatePipelineLayout            func(VulkanDevice, *VkPipelineLayoutCreateInfo, *VkAllocationCallbacks, *VulkanPipelineLayout) VkResult
+    vkCreateComputePipelines          func(VulkanDevice, VulkanPipelineCache, uint32, *VkComputePipelineCreateInfo, *VkAllocationCallbacks, *VulkanPipeline) VkResult
+
+    vkCreateFence                     func(VulkanDevice, *VkFenceCreateInfo, *VkAllocationCallbacks, *VulkanFence) VkResult
+    vkWaitForFences                   func(VulkanDevice, uint32, *VulkanFence, uint32, uint64) VkResult
+
+    vkGetPhysicalDeviceProperties     func(VulkanPhysicalDevice, *VkPhysicalDeviceProperties)
+    vkCreateDescriptorPool            func(VulkanDevice, *VkDescriptorPoolCreateInfo, *VkAllocationCallbacks, *VulkanDescriptorPool) VkResult
+
+    vkDestroyCommandPool              func(VulkanDevice, VulkanCommandPool, *VkAllocationCallbacks)
+    vkDestroyShaderModule             func(VulkanDevice, VulkanShaderModule, *VkAllocationCallbacks)
+
+    vkDestroyDescriptorSetLayout      func(VulkanDevice, VulkanDescriptorSetLayout, *VkAllocationCallbacks)
+    vkDestroyPipelineLayout           func(VulkanDevice, VulkanPipelineLayout, *VkAllocationCallbacks)
+
+    vkDestroyPipeline                 func(VulkanDevice, VulkanPipeline, *VkAllocationCallbacks)
+    vkDestroyDescriptorPool           func(VulkanDevice, VulkanDescriptorPool, *VkAllocationCallbacks)
+
+    vkCmdBindPipeline                 func(VulkanCommandBuffer, VkPipelineBindPoint, VulkanPipeline) VkResult // Upravené
+    vkCmdBindDescriptorSets           func(VulkanCommandBuffer, VkPipelineBindPoint, VulkanPipelineLayout, uint32, uint32, *VulkanDescriptorSet, uint32, *uint32) VkResult // Upravené
+
+    vkCmdDispatch                     func(VulkanCommandBuffer, uint32, uint32, uint32) VkResult // Upravené
+
+    vkGetDeviceQueue                  func(VulkanDevice, uint32, uint32, *VulkanQueue) VkResult // Upravené
+    vkMapMemory                       func(VulkanDevice, VulkanDeviceMemory, uint64, uint64, VkMemoryMapFlags, *unsafe.Pointer) VkResult
+    vkUnmapMemory                     func(VulkanDevice, VulkanDeviceMemory) VkResult // Upravené
+
+    vkGetBufferMemoryRequirements     func(VulkanDevice, VulkanBuffer, *VkMemoryRequirements) VkResult // Upravené
+    vkAllocateMemory                  func(VulkanDevice, *VkMemoryAllocateInfo, *VkAllocationCallbacks, *VulkanDeviceMemory) VkResult
+    vkFreeMemory                      func(VulkanDevice, VulkanDeviceMemory, *VkAllocationCallbacks)
+    vkBindBufferMemory                func(VulkanDevice, VulkanBuffer, VulkanDeviceMemory, uint64) VkResult
+
+    vkGetPhysicalDeviceMemoryProperties func(VulkanPhysicalDevice, *VkPhysicalDeviceMemoryProperties) VkResult // Upravené
+
 	vkEnumerateDevices   func(VulkanInstance, *uint32, *VulkanPhysicalDevice) VkResult
-
-	vkCreateDevice func(VulkanPhysicalDevice, *VkDeviceCreateInfo, *VkAllocationCallbacks, *VulkanDevice) VkResult
-	vkDestroyDevice      func(VulkanDevice, *VkAllocationCallbacks)
-	vkCreateBuffer       func(VulkanDevice, *VkBufferCreateInfo, *VkAllocationCallbacks, *VulkanBuffer) VkResult
-	vkDestroyBuffer      func(VulkanDevice, VulkanBuffer, *VkAllocationCallbacks)
-	vkCreateImage        func(VulkanDevice, *VkImageCreateInfo, *VkAllocationCallbacks, *VulkanImage) VkResult
-	vkDestroyImage       func(VulkanDevice, VulkanImage, *VkAllocationCallbacks)
-	vkCreateShaderModule func(VulkanDevice, *VkShaderModuleCreateInfo, *VkAllocationCallbacks, *VulkanShaderModule) VkResult
-
-
-    vkCreateCommandPool    func(VulkanDevice, *VkCommandPoolCreateInfo, *VkAllocationCallbacks, *VulkanCommandPool) VkResult
-    vkAllocateCommandBuffers func(VulkanDevice, *VkCommandBufferAllocateInfo, *VulkanCommandBuffer) VkResult
-    vkBeginCommandBuffer    func(VulkanCommandBuffer, *VkCommandBufferBeginInfo) VkResult
-    vkEndCommandBuffer      func(VulkanCommandBuffer) VkResult
-    vkQueueSubmit           func(VulkanQueue, uint32, *VkSubmitInfo, VulkanFence) VkResult
-    vkQueueWaitIdle         func(VulkanQueue) VkResult
-
-	vkCreateDescriptorSetLayout func(VulkanDevice, *VkDescriptorSetLayoutCreateInfo, *VkAllocationCallbacks, *VulkanDescriptorSetLayout) VkResult
-    vkAllocateDescriptorSets    func(VulkanDevice, *VkDescriptorSetAllocateInfo, *VulkanDescriptorSet) VkResult
-    vkUpdateDescriptorSets      func(VulkanDevice, uint32, *VkWriteDescriptorSet, uint32, *VkCopyDescriptorSet)
-
-    vkCreatePipelineLayout  func(VulkanDevice, *VkPipelineLayoutCreateInfo, *VkAllocationCallbacks, *VulkanPipelineLayout) VkResult
-    vkCreateComputePipelines func(VulkanDevice, VulkanPipelineCache, uint32, *VkComputePipelineCreateInfo, *VkAllocationCallbacks, *VulkanPipeline) VkResult
-
-    vkCreateFence  func(VulkanDevice, *VkFenceCreateInfo, *VkAllocationCallbacks, *VulkanFence) VkResult
-    vkWaitForFences func(VulkanDevice, uint32, *VulkanFence, uint32, uint64) VkResult 
-
-	vkGetPhysicalDeviceProperties func(VulkanPhysicalDevice, *VkPhysicalDeviceProperties)
-	vkCreateDescriptorPool func(VulkanDevice, *VkDescriptorPoolCreateInfo, *VkAllocationCallbacks, *VulkanDescriptorPool) VkResult
-
-	vkDestroyCommandPool func(VulkanDevice, VulkanCommandPool, *VkAllocationCallbacks)
-	vkDestroyShaderModule func(VulkanDevice, VulkanShaderModule, *VkAllocationCallbacks)
-
-    vkDestroyDescriptorSetLayout func(VulkanDevice, VulkanDescriptorSetLayout, *VkAllocationCallbacks)
-    vkDestroyPipelineLayout func(VulkanDevice, VulkanPipelineLayout, *VkAllocationCallbacks)
-
-    vkDestroyPipeline func(VulkanDevice, VulkanPipeline, *VkAllocationCallbacks)
-    vkDestroyDescriptorPool func(VulkanDevice, VulkanDescriptorPool, *VkAllocationCallbacks)
-
-    vkCmdBindPipeline func(VulkanCommandBuffer, VkPipelineBindPoint, VulkanPipeline)
-    vkCmdBindDescriptorSets func(VulkanCommandBuffer, VkPipelineBindPoint, VulkanPipelineLayout, uint32, uint32, *VulkanDescriptorSet, uint32, *uint32)
-
-    vkCmdDispatch func(VulkanCommandBuffer, uint32, uint32, uint32)
-
-    vkGetDeviceQueue func(VulkanDevice, uint32, uint32, *VulkanQueue)
-    vkMapMemory func(VulkanDevice, VulkanDeviceMemory, uint64, uint64, VkMemoryMapFlags, *unsafe.Pointer) VkResult
-    vkUnmapMemory func(VulkanDevice, VulkanDeviceMemory)
-
-    vkGetBufferMemoryRequirements func(VulkanDevice, VulkanBuffer, *VkMemoryRequirements)
-    vkAllocateMemory func(VulkanDevice, *VkMemoryAllocateInfo, *VkAllocationCallbacks, *VulkanDeviceMemory) VkResult
-    vkFreeMemory func(VulkanDevice, VulkanDeviceMemory, *VkAllocationCallbacks)
-    vkBindBufferMemory func(VulkanDevice, VulkanBuffer, VulkanDeviceMemory, uint64) VkResult
-
-    vkGetPhysicalDeviceMemoryProperties func(VulkanPhysicalDevice, *VkPhysicalDeviceMemoryProperties)
-
-    vkEnumeratePhysicalDevices func(VulkanInstance, *uint32, *VulkanPhysicalDevice) VkResult
 )
 
 // Registrácia Vulkan funkcií
@@ -568,54 +567,6 @@ func VkDestroyDescriptorPool(device VulkanDevice, descriptorPool VulkanDescripto
     return nil
 }
 
-func VkCmdBindPipeline(commandBuffer VulkanCommandBuffer, pipelineBindPoint VkPipelineBindPoint, pipeline VulkanPipeline) error {
-    if vkCmdBindPipeline == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkCmdBindPipeline = nil
-            return err
-        }
-    }
-    vkCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline)
-	return nil
-}
-
-func VkCmdBindDescriptorSets(commandBuffer VulkanCommandBuffer, pipelineBindPoint VkPipelineBindPoint, pipelineLayout VulkanPipelineLayout, firstSet uint32, descriptorSetCount uint32, descriptorSets *VulkanDescriptorSet, dynamicOffsetCount uint32, dynamicOffsets *uint32) error {
-    if vkCmdBindDescriptorSets == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkCmdBindDescriptorSets = nil
-            return err
-        }
-    }
-    vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSets, dynamicOffsetCount, dynamicOffsets)
-	return nil
-}
-
-func VkCmdDispatch(commandBuffer VulkanCommandBuffer, groupCountX uint32, groupCountY uint32, groupCountZ uint32) error {
-    if vkCmdDispatch == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkCmdDispatch = nil
-            return err
-        }
-    }
-    vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ)
-	return nil
-}
-
-func VkGetDeviceQueue(device VulkanDevice, queueFamilyIndex uint32, queueIndex uint32, queue *VulkanQueue) error {
-    if vkGetDeviceQueue == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkGetDeviceQueue = nil
-            return err
-        }
-    }
-    vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, queue)
-	return nil
-}
-
 func VkMapMemory(device VulkanDevice, memory VulkanDeviceMemory, offset uint64, size uint64, flags VkMemoryMapFlags, ppData *unsafe.Pointer) (VkResult, error) {
     if vkMapMemory == nil {
         err := LoadVulkanLibrary()
@@ -626,30 +577,6 @@ func VkMapMemory(device VulkanDevice, memory VulkanDeviceMemory, offset uint64, 
     }
     result := vkMapMemory(device, memory, offset, size, flags, ppData)
     return result, nil
-}
-
-func VkUnmapMemory(device VulkanDevice, memory VulkanDeviceMemory) error {
-    if vkUnmapMemory == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkUnmapMemory = nil
-            return err
-        }
-    }
-    vkUnmapMemory(device, memory)
-	return nil	
-}
-
-func VkGetBufferMemoryRequirements(device VulkanDevice, buffer VulkanBuffer, memoryRequirements *VkMemoryRequirements) error {
-    if vkGetBufferMemoryRequirements == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkGetBufferMemoryRequirements = nil
-            return err
-        }
-    }
-    vkGetBufferMemoryRequirements(device, buffer, memoryRequirements)
-	return nil
 }
 
 func VkAllocateMemory(device VulkanDevice, allocateInfo *VkMemoryAllocateInfo, allocator *VkAllocationCallbacks, memory *VulkanDeviceMemory) (VkResult, error) {
@@ -688,18 +615,6 @@ func VkBindBufferMemory(device VulkanDevice, buffer VulkanBuffer, memory VulkanD
     return result, nil
 }
 
-func VkGetPhysicalDeviceMemoryProperties(physicalDevice VulkanPhysicalDevice, memoryProperties *VkPhysicalDeviceMemoryProperties) error {
-    if vkGetPhysicalDeviceMemoryProperties == nil {
-        err := LoadVulkanLibrary()
-        if err != nil {
-			vkGetPhysicalDeviceMemoryProperties = nil
-            return err
-        }
-    }
-    vkGetPhysicalDeviceMemoryProperties(physicalDevice, memoryProperties)
-	return nil
-}
-
 func VkEnumeratePhysicalDevices(instance VulkanInstance, physicalDeviceCount *uint32, physicalDevices *VulkanPhysicalDevice) (VkResult, error) {
     if vkEnumeratePhysicalDevices == nil {
         err := LoadVulkanLibrary()
@@ -713,13 +628,98 @@ func VkEnumeratePhysicalDevices(instance VulkanInstance, physicalDeviceCount *ui
 
 }
 
+func VkCmdBindPipeline(commandBuffer VulkanCommandBuffer, pipelineBindPoint VkPipelineBindPoint, pipeline VulkanPipeline) (VkResult, error) {
+    if vkCmdBindPipeline == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkCmdBindPipeline = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline)
+    return result, nil
+}
+
+func VkCmdBindDescriptorSets(commandBuffer VulkanCommandBuffer, pipelineBindPoint VkPipelineBindPoint, pipelineLayout VulkanPipelineLayout, firstSet uint32, descriptorSetCount uint32, descriptorSets *VulkanDescriptorSet, dynamicOffsetCount uint32, dynamicOffsets *uint32) (VkResult, error) {
+    if vkCmdBindDescriptorSets == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkCmdBindDescriptorSets = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSets, dynamicOffsetCount, dynamicOffsets)
+    return result, nil
+}
+
+func VkCmdDispatch(commandBuffer VulkanCommandBuffer, groupCountX uint32, groupCountY uint32, groupCountZ uint32) (VkResult, error) {
+    if vkCmdDispatch == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkCmdDispatch = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ)
+    return result, nil
+}
+
+func VkGetDeviceQueue(device VulkanDevice, queueFamilyIndex uint32, queueIndex uint32, queue *VulkanQueue) (VkResult, error) {
+    if vkGetDeviceQueue == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkGetDeviceQueue = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, queue)
+    return result, nil
+}
+
+func VkUnmapMemory(device VulkanDevice, memory VulkanDeviceMemory) (VkResult, error) {
+    if vkUnmapMemory == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkUnmapMemory = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkUnmapMemory(device, memory)
+    return result, nil
+}
+
+func VkGetBufferMemoryRequirements(device VulkanDevice, buffer VulkanBuffer, memoryRequirements *VkMemoryRequirements) (VkResult, error) {
+    if vkGetBufferMemoryRequirements == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkGetBufferMemoryRequirements = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkGetBufferMemoryRequirements(device, buffer, memoryRequirements)
+    return result, nil
+}
+
+func VkGetPhysicalDeviceMemoryProperties(physicalDevice VulkanPhysicalDevice, memoryProperties *VkPhysicalDeviceMemoryProperties) (VkResult, error) {
+    if vkGetPhysicalDeviceMemoryProperties == nil {
+        err := LoadVulkanLibrary()
+        if err != nil {
+            vkGetPhysicalDeviceMemoryProperties = nil
+            return VK_ERROR_UNKNOWN, err
+        }
+    }
+    result := vkGetPhysicalDeviceMemoryProperties(physicalDevice, memoryProperties)
+    return result, nil
+}
+
 
 
 func findMemoryType(physicalDevice VulkanPhysicalDevice, typeFilter uint32, properties VkMemoryPropertyFlags) (uint32, error) {
     var memoryProperties VkPhysicalDeviceMemoryProperties
-    err := VkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties)
-	if err != nil {
-		return 0, err
+	fmt.Printf("findMemoryType called with typeFilter: %d, properties: %d\n", typeFilter, properties) // Pridajte toto
+    res, err := VkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties)
+	if err != nil || res < VK_SUCCESS{
+		return 0, ErrJoin(err, errors.New(HandleVkResult(res)))
 	}
 
     for i := uint32(0); i < memoryProperties.MemoryTypeCount; i++ {
@@ -730,3 +730,4 @@ func findMemoryType(physicalDevice VulkanPhysicalDevice, typeFilter uint32, prop
 
     return 0, errors.New("not found")
 }
+
